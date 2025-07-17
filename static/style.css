@@ -1,0 +1,272 @@
+/* ==================================== */
+/* 1. CSS Variables and Defaults */
+/* ==================================== */
+
+/* Light Mode Variables (Default) */
+:root {
+    /* General & Base Colors */
+    --background-color: #f4f7f6;
+    --text-color: #333;
+    --header-bg: #2c3e50;
+    --header-text: white;
+    --border-color: #eee;
+    --link-color: #3498db;
+    --positive-color: #27ae60; 
+    --negative-color: #e74c3c;
+    --loading-color: #7f8c8d;
+    
+    /* Dashboard Specifics */
+    --card-bg: white;
+    --card-shadow: 0 4px 8px rgba(0,0,0,0.1);
+
+    /* Calculator Specifics */
+    --calc-container-bg: #ffffff;
+    --calc-heading-color: #687d92;
+    --calc-input-bg: #ffffff;
+    --calc-input-border: #ced4da;
+    --calc-button-primary: #007bff;
+    --calc-table-striped-odd: #b2bbc57b;
+    --calc-error-bg: #ffebeb;
+}
+
+/* Dark Mode Variables */
+body.dark-mode {
+    /* General & Base Colors */
+    --background-color: #2a2a3d; /* Main body background in dark mode */
+    --text-color: #ecf0f1;
+    --header-bg: #1a252f;
+    --header-text: #ecf0f1;
+    --border-color: #44607d;
+    --link-color: #64b5f6;
+    --positive-color: #69f0ae;
+    --negative-color: #ff8a80;
+    --loading-color: #95a5a6;
+
+    /* Dashboard Specifics */
+    --card-bg: #34495e;
+    --card-shadow: 0 4px 10px rgba(0,0,0,0.3);
+
+    /* Calculator Specifics */
+    --calc-container-bg: #3a3a4d;
+    --calc-heading-color: #f1f1f1;
+    --calc-input-bg: #3a3a4d;
+    --calc-input-border: #555;
+    --calc-button-primary: #4e8cff;
+    --calc-table-striped-odd: #3a3a4d; 
+    --calc-error-bg: #242b2b;
+}
+
+/* ==================================== */
+/* 2. Base Styles & Typography */
+/* ==================================== */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    transition: background-color 0.3s, color 0.3s;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+h1, h2, h3 {
+    color: var(--calc-heading-color);
+    font-weight: 600;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; margin-top: 40px; }
+h3 { font-size: 1.5rem; margin-top: 30px; color: var(--link-color); }
+
+/* ==================================== */
+/* 3. Dashboard Layout & Components */
+/* ==================================== */
+
+/* Header */
+header {
+    background-color: var(--header-bg);
+    color: var(--header-text);
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Theme Switch (Slider) */
+.theme-switch-wrapper {
+    display: flex;
+    align-items: center;
+}
+/* ... (The slider styles are omitted here for brevity but should be included from your original CSS) ... */
+
+/* Stock Grid */
+.stock-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+/* Stock Card */
+.stock-card {
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, background-color 0.3s, box-shadow 0.3s;
+    border: 1px solid var(--border-color);
+}
+
+.stock-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.company-logo {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: contain;
+    margin-right: 15px;
+    border: 1px solid var(--border-color);
+}
+
+/* Price colors */
+.positive { color: var(--positive-color); }
+.negative { color: var(--negative-color); }
+
+/* ==================================== */
+/* 4. Calculator Layout & Components */
+/* ==================================== */
+
+.container {
+    margin: 60px auto;
+    background-color: var(--calc-container-bg);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(200, 180, 180, 0.54);
+    padding: 30px;
+    max-width: 1000px;
+}
+
+.form-layout {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 1px solid var(--calc-input-border);
+    padding: 15px 20px;
+    background-color: var(--calc-input-bg);
+    color: var(--text-color);
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.btn-primary {
+    background-color: var(--calc-button-primary);
+    border-color: var(--calc-button-primary);
+    /* ... (rest of the button styles defined above) ... */
+}
+
+/* Results and Error Styling */
+.results-section, .chart-section, .comparison-section, .export-options {
+    margin-top: 40px;
+    padding-top: 25px;
+    border-top: 1px dashed var(--border-color);
+}
+
+.error {
+    color: var(--negative-color);
+    font-weight: 600;
+    background-color: var(--calc-error-bg);
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--negative-color);
+}
+
+/* Table Styling (Comparison of Scenarios) */
+.table {
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(139, 194, 181, 0.65);
+    background-color: var(--calc-container-bg); 
+}
+
+.table thead th {
+    background-color: var(--calc-button-primary);
+    color: white;
+    border-bottom: none;
+    font-weight: 500;
+}
+
+/* Striped rows background color */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: var(--calc-table-striped-odd);
+}
+
+/* Crucial for visibility in dark mode: Ensure table body text uses the current text color variable */
+.table tbody td {
+    color: var(--text-color);
+}
+/* --- style.css --- */
+
+/* Remove (or comment out) the following styles if they exist: */
+/*
+.iframe-wrapper { ... }
+.external-iframe { ... }
+*/
+
+/* 1. Ensure the header-tools container remains correctly positioned */
+.header-tools {
+    display: flex;
+    flex-direction: column; /* Stacks elements vertically */
+    align-items: flex-end;   /* Aligns to the right */
+    gap: 10px; /* Space between button and theme switch */
+}
+
+/* 2. Style the redirect button */
+.redirect-button {
+    /* Basic button styling */
+    display: inline-block;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, transform 0.2s;
+
+    /* Use theme variables for color */
+    background-color: var(--calc-button-primary); 
+    color: var(--header-text); /* Use header text color for button text */
+}
+
+.redirect-button:hover {
+    background-color: var(--calc-button-primary-dark);
+    transform: translateY(-2px);
+}
+/* Existing dark mode styles */
+body.dark-mode {
+    background-color: #e6e6f0; /* Example dark background */
+    color: #998585; /* Example light text */
+}
+
+/* Add this for the select dropdown in dark mode */
+body.dark-mode .form-control#tickers {
+    background-color: rgb(227, 215, 215);
+    color: rgb(219, 212, 212);
+}
+
+.header-tools a {
+    display: block;
+    margin-bottom: 10px;
+}
