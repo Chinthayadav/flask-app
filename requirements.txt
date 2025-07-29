@@ -4,3 +4,4 @@ pandas
 finnhub-python
 yfinance
 requests
+reportlab
