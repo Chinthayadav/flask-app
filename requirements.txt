@@ -1,0 +1,6 @@
+Flask
+matplotlib
+pandas
+finnhub-python
+yfinance
+requests
