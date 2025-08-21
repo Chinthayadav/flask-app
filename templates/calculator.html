@@ -577,6 +577,25 @@
             font-size: 0.9rem;
             color: var(--header-text);
         }
+
+        /* Loading indicator styles */
+        .loading-indicator {
+            display: none;
+            color: var(--info-color);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .loading-indicator.show {
+            display: block;
+        }
+
+        /* Auto-calculated field styling */
+        .auto-calculated {
+            background-color: var(--table-header-bg) !important;
+            border: 2px solid var(--button-primary-bg) !important;
+            font-weight: 600;
+        }
         
     </style>
     
@@ -619,11 +638,6 @@
     }
 </style>
 
-
-
-
-
-    
     <div class="container">
             <p class="text-center text-muted" style="color: var(--text-color) !important;">Simulate your investment growth with dividend reinvestment.</p>
 
@@ -665,27 +679,34 @@
                 </div>
                 <div class="form-group">
                     <label for="initial_investment">Initial Investment ($):</label>
-                    <input type="number" class="form-control" id="initial_investment" name="initial_investment" value="{{ initial_investment | default(10000, true) }}" min="1" step="0.01" required>
+                    <input type="number" class="form-control" id="initial_investment" name="initial_investment" value="" min="1" step="0.01" required>
                 </div>
                 <div class="form-group">
                     <label for="investment_years">Investment Duration (Years):</label>
-                    <input type="number" class="form-control" id="investment_years" name="investment_years" value="{{ investment_years | default(10, true) }}" min="1" required>
+                    <input type="number" class="form-control" id="investment_years" name="investment_years" value="" min="1" required>
                 </div>
                 <div class="form-group">
                     <label for="initial_share_price">Initial Share Price ($):</label>
-                    <input type="number" class="form-control" id="initial_share_price" name="initial_share_price" value="{{ initial_share_price | default(100, true) }}" min="0.01" step="0.01">
+                    <input type="number" class="form-control" id="initial_share_price" name="initial_share_price" value="202.49" min="0.01" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="new_initial_share_price">Initial Shares (Auto-calculated):</label>
+                    <input type="number" class="form-control auto-calculated" id="new_initial_share_price" name="new_initial_share_price" value="49.39" step="0.01" readonly>
+                    <div class="loading-indicator" id="loading_indicator">
+                        <small>Fetching current stock prices...</small>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="dividend_yield">Dividend Yield (%, used if data fetch fails):</label>
-                    <input type="number" class="form-control" id="dividend_yield" name="dividend_yield" value="{{ dividend_yield | default(2.5, true) }}" min="0" step="0.01">
+                    <input type="number" class="form-control" id="dividend_yield" name="dividend_yield" value="" min="0" step="0.01">
                 </div>
                 <div class="form-group">
-                    <label for="annual_dividend_growth_rate">Annual Dividend Growth Rate (%, used if data fetch fails):</label>
-                    <input type="number" class="form-control" id="annual_dividend_growth_rate" name="annual_dividend_growth_rate" value="{{ annual_dividend_growth_rate | default(5, true) }}" step="0.01">
+                    <label for="annual_dividend_growth_rate">Annual Dividend Growth Rate :</label>
+                    <input type="number" class="form-control" id="annual_dividend_growth_rate" name="annual_dividend_growth_rate" value="" step="0.01">
                 </div>
                 <div class="form-group">
                     <label for="annual_stock_price_growth_rate">Annual Stock Price Growth Rate (%):</label>
-                    <input type="number" class="form-control" id="annual_stock_price_growth_rate" name="annual_stock_price_growth_rate" value="{{ annual_stock_price_growth_rate | default(7, true) }}" step="0.01">
+                    <input type="number" class="form-control" id="annual_stock_price_growth_rate" name="annual_stock_price_growth_rate" value="" step="0.01">
                 </div>
                 <div class="form-group">
                     <label>Dividend Payout Frequency:</label>
@@ -699,7 +720,7 @@
                             <label class="form-check-label" for="freqSemiAnnual">Semi-Annual</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="payout_frequency" id="freqQuarterly" value="Quarterly" {% if payout_frequency == 'Quarterly' %}checked{% endif %}>
+                            <input class="form-check-input" type="radio" name="payout_frequency" id="freqQuarterly" value="Quarterly" checked>
                             <label class="form-check-label" for="freqQuarterly">Quarterly</label>
                         </div>
                         <div class="form-check form-check-inline">
@@ -708,10 +729,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="form-group form-check mb-3">
-                <input type="checkbox" class="form-check-input" id="drip_enabled" name="drip_enabled" value="yes" {% if drip_enabled == 'yes' %}checked{% endif %}>
-                <label class="form-check-label" for="drip_enabled">Enable Dividend Reinvestment (DRIP)</label>
             </div>
             <button type="submit" class="btn btn-primary">Calculate DRIP</button>
         </form>
@@ -764,7 +781,6 @@
                                                 <th>Stock Price (Start)</th>
                                                 <th>Annual Dividend Per Share</th>
                                                 <th>Dividends Received (Year)</th>
-                                                <th>Reinvested Shares (Year)</th>
                                                 <th>Shares Owned (End)</th>
                                                 <th>Portfolio Value (End)</th>
                                             </tr>
@@ -777,8 +793,7 @@
                                                     <td>{{ year_data['Stock Price (Start)'] }}</td>
                                                     <td>{{ year_data['Annual Dividend Per Share'] }}</td>
                                                     <td>{{ year_data['Dividends Received (Year)'] }}</td>
-                                                    <td>{{ year_data['Reinvested Shares (Year)'] }}</td>
-                                                    <td>{{ year_data['Shares Owned (End)'] }}</td>
+                                                   <td>{{ year_data['Shares Owned (End)'] }}</td>
                                                     <td>{{ year_data['Portfolio Value (End)'] }}</td>
                                                 </tr>
                                             {% endfor %}
@@ -811,22 +826,27 @@
                 {% endif %}
             {% endfor %}
 
-            {# Export CSV and PDF buttons #}
+         {# Export CSV and PDF buttons #}
             {% if results and not (results|selectattr('error')|list) %}
                <div class="export-options" style="margin-top: 20px; display: flex; flex-direction: column; align-items: center;">
     <h3>Export Options</h3> {# Changed heading text #}
-    <form action="/export_csv" method="POST" onsubmit="updateExportTickers()" style="margin-bottom: 10px;"> {# Added margin-bottom for spacing #}
-        <input type="hidden" name="export_tickers_hidden" id="export_tickers_hidden">
-        <input type="hidden" name="export_initial_investment" value="{{ initial_investment }}">
-        <input type="hidden" name="export_investment_years" value="{{ investment_years }}">
-        <input type="hidden" name="export_drip_enabled" value="{{ drip_enabled }}">
-        <input type="hidden" name="export_initial_share_price" value="{{ initial_share_price }}">
-        <input type="hidden" name="export_dividend_yield" value="{{ dividend_yield }}">
-        <input type="hidden" name="export_annual_dividend_growth_rate" value="{{ annual_dividend_growth_rate }}">
-        <input type="hidden" name="export_annual_stock_price_growth_rate" value="{{ annual_stock_price_growth_rate }}">
-        <input type="hidden" name="export_payout_frequency" value="{{ payout_frequency }}">
-        <button type="submit" class="btn btn-info">Download All Results as CSV</button>
-    </form>
+    <div class="row mt-4">
+    <div class="col-12 text-center">
+        <form id="exportForm" action="/export_csv" method="POST">
+            <input type="hidden" name="export_tickers_hidden" id="export_tickers_hidden">
+            <input type="hidden" name="export_initial_investment" id="export_initial_investment">
+            <input type="hidden" name="export_investment_years" id="export_investment_years">
+            <input type="hidden" name="export_drip_enabled" id="export_drip_enabled">
+            <input type="hidden" name="export_initial_share_price" id="export_initial_share_price">
+            <input type="hidden" name="export_dividend_yield" id="export_dividend_yield">
+            <input type="hidden" name="export_annual_dividend_growth_rate" id="export_annual_dividend_growth_rate">
+            <input type="hidden" name="export_annual_stock_price_growth_rate" id="export_annual_stock_price_growth_rate">
+            <input type="hidden" name="export_payout_frequency" id="export_payout_frequency">
+
+            <button type="submit" class="btn btn-primary" id="download-btn">Download CSV</button>
+        </form>
+    </div>
+</div>
                     <form action="/export_pdf" method="POST" onsubmit="updateExportTickers()">
                         <input type="hidden" name="export_tickers_hidden" id="export_tickers_hidden_pdf"> {# Use a separate ID for PDF form #}
                         <input type="hidden" name="export_initial_investment" id="export_initial_investment_pdf" value="{{ initial_investment }}">
@@ -869,6 +889,52 @@
             localStorage.setItem('theme', this.checked ? 'dark' : 'light');
         });
 
+        // Function to calculate initial shares
+        function calculateInitialShares(investment, currentPrice) {
+            if (investment > 0 && currentPrice > 0) {
+                return investment / currentPrice;
+            }
+            return 0;
+        }
+
+        // Function to update the new_initial_share_price field
+        function updateInitialShares() {
+            const investment = parseFloat($('#initial_investment').val()) || 0;
+            const selectedTickers = $('#tickers').val() || [];
+            
+            if (selectedTickers.length > 0 && investment > 0) {
+                $('#loading_indicator').addClass('show');
+                $('#new_initial_share_price').val('Calculating...');
+                
+                // Get the first selected ticker to fetch current price
+                const firstTicker = selectedTickers[0];
+                
+                // Make AJAX call to get stock price
+                $.ajax({
+                    url: `/api/get_stock_price/${firstTicker}`,
+                    method: 'GET',
+                    success: function(data) {
+                        $('#loading_indicator').removeClass('show');
+                        if (data.currentPrice) {
+                            const initialShares = calculateInitialShares(investment, data.currentPrice);
+                            $('#new_initial_share_price').val(initialShares.toFixed(2));
+                            
+                            // Update the initial_share_price field with current price
+                            $('#initial_share_price').val(data.currentPrice.toFixed(2));
+                        } else {
+                            $('#new_initial_share_price').val('0.00');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        $('#loading_indicator').removeClass('show');
+                        console.error('Error fetching stock price:', error);
+                        $('#new_initial_share_price').val('Error');
+                    }
+                });
+            } else {
+                $('#new_initial_share_price').val('0.00');
+            }
+        }
 
        $(document).ready(function() {
             console.log("jQuery and DOM ready, attempting to initialize Select2..."); // Debug log
@@ -901,7 +967,18 @@
             if (Array.isArray(selectedTickersFromFlask) && selectedTickersFromFlask.length > 0) {
                 // Set the value of the Select2 and trigger change to update its display
                 $tickersSelect.val(selectedTickersFromFlask).trigger('change');
+                // Calculate initial shares for the selected tickers
+                updateInitialShares();
             }
+
+            // Add event listeners for automatic calculation
+            $tickersSelect.on('change', function() {
+                updateInitialShares();
+            });
+
+            $('#initial_investment').on('input change', function() {
+                updateInitialShares();
+            });
 
             // Initialize Chart.js graphs after data is available
             let results = [];
@@ -1099,6 +1176,62 @@
             $('#export_payout_frequency_pdf').val($('input[name="payout_frequency"]:checked').val());
         }
     </script>
-    
+    <script>
+    // Get the download button
+    const downloadBtn = document.getElementById('download-btn');
+
+    // Add a click event listener
+    downloadBtn.addEventListener('click', function(event) {
+        // Prevent the default form submission for a moment
+        event.preventDefault();
+
+        // Get values from the main form (assuming they have IDs like 'tickers', 'initialInvestment', etc.)
+        const tickers = document.getElementById('tickers').value;
+        const initialInvestment = document.getElementById('initial_investment').value;
+        const investmentYears = document.getElementById('investment_years').value;
+        const dripEnabled = document.getElementById('drip_enabled').checked ? 'yes' : 'no';
+        const initialSharePrice = document.getElementById('initial_share_price').value;
+        const dividendYield = document.getElementById('dividend_yield').value;
+        const annualDividendGrowthRate = document.getElementById('annual_dividend_growth_rate').value;
+        const annualStockPriceGrowthRate = document.getElementById('annual_stock_price_growth_rate').value;
+        const payoutFrequency = document.getElementById('payout_frequency').value;
+
+        // Copy values to the hidden input fields in the export form
+        document.getElementById('export_tickers_hidden').value = tickers;
+        document.getElementById('export_initial_investment').value = initialInvestment;
+        document.getElementById('export_investment_years').value = investmentYears;
+        document.getElementById('export_drip_enabled').value = dripEnabled;
+        document.getElementById('export_initial_share_price').value = initialSharePrice;
+        document.getElementById('export_dividend_yield').value = dividendYield;
+        document.getElementById('export_annual_dividend_growth_rate').value = annualDividendGrowthRate;
+        document.getElementById('export_annual_stock_price_growth_rate').value = annualStockPriceGrowthRate;
+        document.getElementById('export_payout_frequency').value = payoutFrequency;
+
+        // Finally, submit the form to the Flask route
+        document.getElementById('exportForm').submit();
+    });
+</script>
+
+<script>
+    // This code must be after the button and form are defined in the HTML
+    document.addEventListener('DOMContentLoaded', function() {
+        const downloadBtn = document.getElementById('download-btn');
+        if (downloadBtn) { // This check prevents the error if the button isn't found
+            downloadBtn.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent the default action
+
+                // Get values from the main form inputs (make sure these IDs exist)
+                const tickers = document.getElementById('tickers').value;
+
+                // Populate the hidden form fields
+                document.getElementById('export_tickers_hidden').value = tickers;
+
+                // Submit the hidden form
+                document.getElementById('exportForm').submit();
+            });
+        }
+    });
+</script>
+
 </body>
 </html>
