@@ -5,3 +5,5 @@ finnhub-python
 yfinance
 requests
 reportlab
+gunicorn
+
